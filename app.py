@@ -153,7 +153,9 @@ def subscribe():
 
 with app.app_context():
     try:
-        db.create_all()  
+        db.create_all()
+        db.session.commit()
+        
         check_table = db.session.execute(text("SELECT COUNT(*) FROM offerings")).fetchone()
         if check_table and check_table[0] == 0:
             db.session.execute(text("""
@@ -163,5 +165,11 @@ with app.app_context():
                 ('Edge AI & TinyML Systems', 'Learn hardware-aware artificial intelligence and deploying models on microcontrollers.')
             """))
             db.session.commit()
+            print("🏆 Database and courses initialized successfully!")
     except Exception as e:
-        print(f"Database Initialization Info: {e}")
+        try:
+            db.create_all()
+            db.session.commit()
+        except:
+            pass
+        print(f"Database setup note: {e}")
