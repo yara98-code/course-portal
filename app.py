@@ -151,22 +151,17 @@ def subscribe():
     return jsonify({"success": True, "message": "Subscribed successfully!"})
 
 
-
- if __name__ == "__main__":
-    with app.app_context():
-        try:
-            db.create_all()  
-            check_table = db.session.execute(text("SELECT COUNT(*) FROM offerings")).fetchone()
-            if check_table and check_table[0] == 0:
-                db.session.execute(text("""
-                    INSERT INTO offerings (title, description) VALUES 
-                    ('Advanced AI & Machine Learning', 'Deep dive into neural networks, Computer Vision, and medical image segmentation.'),
-                    ('Full-Stack Web Development', 'Master backend and frontend architectures using Flask, MySQL, and modern JavaScript.'),
-                    ('Edge AI & TinyML Systems', 'Learn hardware-aware artificial intelligence and deploying models on microcontrollers.')
-                """))
-                db.session.commit()
-        except Exception as e:
-            print(f"Database Initialization Info: {e}")
-
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+with app.app_context():
+    try:
+        db.create_all()  
+        check_table = db.session.execute(text("SELECT COUNT(*) FROM offerings")).fetchone()
+        if check_table and check_table[0] == 0:
+            db.session.execute(text("""
+                INSERT INTO offerings (title, description) VALUES 
+                ('Advanced AI & Machine Learning', 'Deep dive into neural networks, Computer Vision, and medical image segmentation.'),
+                ('Full-Stack Web Development', 'Master backend and frontend architectures using Flask, MySQL, and modern JavaScript.'),
+                ('Edge AI & TinyML Systems', 'Learn hardware-aware artificial intelligence and deploying models on microcontrollers.')
+            """))
+            db.session.commit()
+    except Exception as e:
+        print(f"Database Initialization Info: {e}")
