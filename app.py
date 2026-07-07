@@ -1,3 +1,4 @@
+import os
 from flask import (
     Flask,
     render_template,
@@ -34,14 +35,12 @@ def register():
 
         hashed = generate_password_hash(password)
 
-
         result = db.session.execute(text("SELECT id FROM users WHERE email=:email"), {"email": email}).fetchone()
         
         if result:
             flash("Email already exists.")
             return redirect(url_for("register"))
 
- 
         db.session.execute(
             text("INSERT INTO users(name, email, password_hash) VALUES(:name, :email, :password_hash)"),
             {"name": name, "email": email, "password_hash": hashed}
@@ -53,13 +52,14 @@ def register():
 
     return render_template("register.html")
 
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
 
-        if email == "admin" and password == "admin":
+        if email == "ADMIN" and password == "ADMIN":
             session["user_id"] = 0
             session["user_name"] = "Admin Examiner"
             return redirect(url_for("dashboard"))
@@ -100,10 +100,12 @@ def logout():
     session.clear()
     return redirect(url_for("home"))
 
-# صفحة استعراض الكورسات الأساسية
+
+
 @app.route("/offerings")
 def offerings():
     return render_template("offerings.html")
+
 
 @app.route("/api/offerings", methods=["GET"])
 def get_offerings():
@@ -130,7 +132,6 @@ def subscribe():
 
     offering = data["offering_id"]
 
-   
     exists = db.session.execute(text("""
         SELECT id FROM subscriptions WHERE user_id=:user_id AND offering_id=:offering_id
     """), {"user_id": session["user_id"], "offering_id": offering}).fetchone()
@@ -138,11 +139,9 @@ def subscribe():
     if exists:
         return jsonify({"success": False, "message": "Already subscribed."})
 
-    
     course_exists = db.session.execute(text("SELECT id FROM offerings WHERE id=:id"), {"id": offering}).fetchone()
     if not course_exists:
         return jsonify({"success": False, "message": "Offering not found."}), 404
-
 
     db.session.execute(text("""
         INSERT INTO subscriptions (user_id, offering_id) VALUES (:user_id, :offering_id)
@@ -151,9 +150,23 @@ def subscribe():
 
     return jsonify({"success": True, "message": "Subscribed successfully!"})
 
-if __name__ == "__main__":
-    import os
+
+
+تهيئة قاعدة if __name__ == "__main__":
     with app.app_context():
-        db.create_all()
+        try:
+            db.create_all()  
+            check_table = db.session.execute(text("SELECT COUNT(*) FROM offerings")).fetchone()
+            if check_table and check_table[0] == 0:
+                db.session.execute(text("""
+                    INSERT INTO offerings (title, description) VALUES 
+                    ('Advanced AI & Machine Learning', 'Deep dive into neural networks, Computer Vision, and medical image segmentation.'),
+                    ('Full-Stack Web Development', 'Master backend and frontend architectures using Flask, MySQL, and modern JavaScript.'),
+                    ('Edge AI & TinyML Systems', 'Learn hardware-aware artificial intelligence and deploying models on microcontrollers.')
+                """))
+                db.session.commit()
+        except Exception as e:
+            print(f"Database Initialization Info: {e}")
+
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)
