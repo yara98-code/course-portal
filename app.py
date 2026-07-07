@@ -152,7 +152,7 @@ def subscribe():
 
 
 
-تهيئة قاعدة if __name__ == "__main__":
+ if __name__ == "__main__":
     with app.app_context():
         try:
             db.create_all()  
