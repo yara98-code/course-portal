@@ -153,23 +153,42 @@ def subscribe():
 
 with app.app_context():
     try:
-        db.create_all()
-        db.session.commit()
+        db.session.execute(text("""
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(150) NOT NULL,
+                email VARCHAR(150) UNIQUE NOT NULL,
+                password_hash VARCHAR(255) NOT NULL
+            );
+        """))
         
+        db.session.execute(text("""
+            CREATE TABLE IF NOT EXISTS offerings (
+                id SERIAL PRIMARY KEY,
+                title VARCHAR(200) NOT NULL,
+                description TEXT NOT NULL
+            );
+        """))
+        
+        db.session.execute(text("""
+            CREATE TABLE IF NOT EXISTS subscriptions (
+                id SERIAL PRIMARY KEY,
+                user_id INT NOT NULL,
+                offering_id INT NOT NULL
+            );
+        """))
+        db.session.commit()
+
         check_table = db.session.execute(text("SELECT COUNT(*) FROM offerings")).fetchone()
         if check_table and check_table[0] == 0:
             db.session.execute(text("""
                 INSERT INTO offerings (title, description) VALUES 
                 ('Advanced AI & Machine Learning', 'Deep dive into neural networks, Computer Vision, and medical image segmentation.'),
-                ('Full-Stack Web Development', 'Master backend and frontend architectures using Flask, MySQL, and modern JavaScript.'),
+                ('Full-Stack Web Development', 'Master backend and frontend architectures using Flask, PostgreSQL, and modern JavaScript.'),
                 ('Edge AI & TinyML Systems', 'Learn hardware-aware artificial intelligence and deploying models on microcontrollers.')
             """))
             db.session.commit()
-            print("🏆 Database and courses initialized successfully!")
+            print("🏆 Tables and courses initialized successfully via explicit SQL!")
+            
     except Exception as e:
-        try:
-            db.create_all()
-            db.session.commit()
-        except:
-            pass
-        print(f"Database setup note: {e}")
+        print(f"Database Initialization Note: {e}")
