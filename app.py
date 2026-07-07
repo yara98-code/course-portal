@@ -101,6 +101,10 @@ def logout():
     return redirect(url_for("home"))
 
 
+@app.route("/offerings")
+def offerings():
+    return render_template("offerings.html")
+
 
 @app.route("/api/offerings", methods=["GET"])
 def get_offerings():
@@ -185,46 +189,3 @@ def subscribe():
     db.session.commit()
 
     return jsonify({"success": True, "message": "Subscribed successfully!"})
-
-
-with app.app_context():
-    try:
-        db.session.execute(text("""
-            CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY KEY,
-                name VARCHAR(150) NOT NULL,
-                email VARCHAR(150) UNIQUE NOT NULL,
-                password_hash VARCHAR(255) NOT NULL
-            );
-        """))
-        
-        db.session.execute(text("""
-            CREATE TABLE IF NOT EXISTS offerings (
-                id SERIAL PRIMARY KEY,
-                title VARCHAR(200) NOT NULL,
-                description TEXT NOT NULL
-            );
-        """))
-        
-        db.session.execute(text("""
-            CREATE TABLE IF NOT EXISTS subscriptions (
-                id SERIAL PRIMARY KEY,
-                user_id INT NOT NULL,
-                offering_id INT NOT NULL
-            );
-        """))
-        db.session.commit()
-
-        check_table = db.session.execute(text("SELECT COUNT(*) FROM offerings")).fetchone()
-        if check_table and check_table[0] == 0:
-            db.session.execute(text("""
-                INSERT INTO offerings (title, description) VALUES 
-                ('Advanced AI & Machine Learning', 'Deep dive into neural networks, Computer Vision, and medical image segmentation.'),
-                ('Full-Stack Web Development', 'Master backend and frontend architectures using Flask, PostgreSQL, and modern JavaScript.'),
-                ('Edge AI & TinyML Systems', 'Learn hardware-aware artificial intelligence and deploying models on microcontrollers.')
-            """))
-            db.session.commit()
-            print("🏆 Tables and courses initialized successfully via explicit SQL!")
-            
-    except Exception as e:
-        print(f"Database Initialization Note: {e}")
