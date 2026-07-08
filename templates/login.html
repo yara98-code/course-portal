@@ -6,19 +6,23 @@
         <div class="card auth-card p-4 shadow-sm" style="border: none; border-radius: 24px;">
             <h3 class="text-center fw-bold text-dark mb-4">Welcome Back</h3>
             <form method="POST" action="{{ url_for('login') }}">
+                
                 <div class="mb-3">
-                    <label class="form-label fw-bold small text-secondary">Email Address</label>
-                    <input type="email" name="email" class="form-control" placeholder="Enter email address" style="border-radius: 12px; padding: 10px 15px;" required>
+                    <label class="form-label fw-bold small text-secondary">Username / Email</label>
+                    <input type="text" name="email" class="form-control" placeholder="Enter ADMIN or your email" style="border-radius: 12px; padding: 10px 15px;" required>
                 </div>
+                
                 <div class="mb-4">
                     <label class="form-label fw-bold small text-secondary">Password</label>
                     <input type="password" name="password" class="form-control" placeholder="••••••••" style="border-radius: 12px; padding: 10px 15px;" required>
                 </div>
+                
                 <button type="submit" class="btn text-white w-100 py-2.5 fw-bold shadow-sm" style="background: #4f46e5; border: none; border-radius: 12px;">Sign In</button>
             </form>
+            
             <div class="alert alert-light border rounded-3 text-center mt-4 mb-0 py-2" style="background-color: #f8fafc;">
                 <small class="text-muted fw-bold">Examiner Account Profile:</small><br>
-                <small class="text-secondary">User: <code>admin</code> | Pass: <code>admin</code></small>
+                <small class="text-secondary">User: <code>ADMIN</code> | Pass: <code>ADMIN</code></small>
             </div>
         </div>
     </div>
