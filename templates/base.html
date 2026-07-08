@@ -41,20 +41,9 @@
             background: linear-gradient(135deg, #0f172a, #1e293b) !important;
             border-bottom: 3px solid #4f46e5;
         }
-       <div class="navbar-nav ms-auto align-items-center">
-    <a class="nav-link" href="{{ url_for('home') }}">Home</a>
-    <a class="nav-link" href="{{ url_for('offerings') }}">Browse Courses</a>
-    
-    {% if session.get('user_id') is not none %}
-        <a class="nav-link fw-bold text-info" href="{{ url_for('dashboard') }}">📊 Dashboard</a>
-        <a class="btn btn-sm btn-danger text-white ms-2 px-3" style="border-radius: 10px;" href="{{ url_for('logout') }}">Logout</a>
-    {% else %}
-        <a class="btn btn-sm btn-outline-light ms-2 px-3" style="border-radius: 10px;" href="{{ url_for('login') }}">Login</a>
-        <a class="btn btn-sm btn-success text-white ms-2 px-3" style="border-radius: 10px; background-color: #10b981; border: none;" href="{{ url_for('register') }}">Register</a>
-    {% endif %}
-    
-    <button id="theme-toggle" class="ms-3" aria-pressed="false">Dark Mode</button>
-</div>
+        .navbar-brand { font-weight: 800; letter-spacing: 0.5px; color: #f8fafc !important; }
+        .nav-link { font-weight: 500; color: #cbd5e1 !important; transition: color 0.3s; }
+        .nav-link:hover, .nav-link.active { color: #818cf8 !important; }
 
         #theme-toggle {
             background: transparent;
@@ -104,13 +93,15 @@
                 <div class="navbar-nav ms-auto align-items-center">
                     <a class="nav-link" href="{{ url_for('home') }}">Home</a>
                     <a class="nav-link" href="{{ url_for('offerings') }}">Browse Courses</a>
-                    {% if session.get('user_id') %}
-                        <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+                    
+                    {% if session.get('user_id') is not none %}
+                        <a class="nav-link fw-bold" href="{{ url_for('dashboard') }}" style="color: #818cf8 !important;">Dashboard</a>
                         <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
                     {% else %}
                         <a class="nav-link" href="{{ url_for('login') }}">Login</a>
                         <a class="nav-link" href="{{ url_for('register') }}">Register</a>
                     {% endif %}
+                    
                     <button id="theme-toggle" class="ms-3" aria-pressed="false">Dark Mode</button>
                 </div>
             </div>
