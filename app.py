@@ -79,7 +79,9 @@ def login():
 
 @app.route("/dashboard")
 def dashboard():
+    # إذا لم يكن هناك معرف مستخدم في الجلسة، اطرده لصفحة تسجيل الدخول
     if "user_id" not in session:
+        flash("Please login to access the dashboard.")
         return redirect(url_for("login"))
 
     user_id = session["user_id"]
